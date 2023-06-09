@@ -1,0 +1,11 @@
+version: 2
+
+sources:
+  - name: google_analytics
+    schema: dbt
+    tables:
+      - name: ga_traffic
+        columns:
+          - name: date
+            tests:
+              - unique

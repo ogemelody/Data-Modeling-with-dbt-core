@@ -1,0 +1,21 @@
+version: 2
+
+sources:
+ - name: jaffle_shop
+   schema: raw
+   tables:
+     - name: orders
+       columns:
+         - name: id
+           tests:
+             - unique
+     - name: customers
+       columns: 
+         - name: id
+           tests:
+             - unique
+     - name: payments
+       columns:
+         - name: id
+           tests:
+             - unique

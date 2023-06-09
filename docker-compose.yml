@@ -1,0 +1,51 @@
+version: "3.8"
+services:
+  dbt:
+    container_name: dbt
+    build: .
+    ports:
+      - 8088:8088
+    restart: always
+    tty: true
+    environment:
+      DBT_PROFILES_DIR: /project/dbt_demo/profiles
+    volumes:
+      - ./dbt:/project
+    depends_on:
+      database:
+        condition: service_healthy
+
+  database:
+    container_name: dbt-workshop-db
+    image: postgres:13.6-alpine
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: datawarehouse
+    ports:
+      - 5432:5432
+    healthcheck:
+      test: [ "CMD", "su", "postgres", "-c", "pg_isready" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 5s
+    volumes:
+      - db:/var/lib/postgresql/data
+      - ./db/init.sql:/docker-entrypoint-initdb.d/create_tables.sql
+
+  adminer:
+    container_name: dbt-workshop-adminer
+    image: adminer
+    ports:
+      - 8080:8080
+    depends_on:
+      database:
+        condition: service_healthy
+  
+
+volumes:
+  db:
+    driver: local
+ 
